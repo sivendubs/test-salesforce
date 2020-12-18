@@ -65,7 +65,7 @@ pipeline {
 			script {
 				configFileProvider([configFile(fileId: '706c4f0b-71dc-46f3-9542-b959e2d26ce7', variable: 'settings')]){
 			   	LAST_STARTED = env.STAGE_NAME
-			   	sh "mvn -f acme-salesforce-accounts-sapi/pom.xml -s $settings -Dhttp.port=8086 -Dmaven.wagon.http.ssl.insecure=true -Dmaven.wagon.http.ssl.allowall=true -Dmaven.wagon.http.ssl.ignore.validity.dates=true -Dinternal.repo.username=admin -Dinternal.repo.password=NjcNexus@123 -Dmaven.repo.local=http://104.248.169.167:8081/repository/maven-dependency-releases/ test"
+			   	sh "mvn -f acme-salesforce-accounts-sapi/pom.xml -s $settings -Dhttp.port=8086 -Dmaven.wagon.http.ssl.insecure=true -Dmaven.wagon.http.ssl.allowall=true -Dmaven.wagon.http.ssl.ignore.validity.dates=true -Dinternal.repo.username=admin -Dinternal.repo.password=NjcNexus@123 -Dmaven.repo.remote=http://104.248.169.167:8081/repository/maven-dependency-releases/ test"
                            
 				}	
 			}		
