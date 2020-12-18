@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd">
+	<munit:config name="acme-salesforce-accounts-implementation-suite.xml" />
+	<munit:test name="query-all-accounts-test" doc:id="57697847-15fe-4fee-9ee9-52d7f8672ee2" >
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock Query All Accounts" doc:id="3a8f3d44-228a-4d55-87cf-ecb9ad73f3d2" processor="salesforce:query">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="a38bb2b8-5f94-49bd-a5a9-0a2122c121e1" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[output application/java --- readUrl('classpath://queryallaccountstest/mock_payload.dwl')]" mediaType="application/java" encoding="UTF-8" />
+					<munit-tools:variables >
+						<munit-tools:variable key="outboundHeaders" value="#[readUrl('classpath://queryallaccountstest/mock_variable_.dwl')]" />
+					</munit-tools:variables>
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+			<munit:set-event doc:name="Set Input" doc:id="20c0ac12-9fac-4884-992f-cc768de28bbe" >
+				<munit:payload value="#[output application/json --- readUrl('classpath://queryallaccountstest/set-event_payload.dwl')]" encoding="UTF-8" mediaType="application/json" />
+				<munit:attributes value="#[readUrl('classpath://queryallaccountstest/set-event_attributes.dwl')]" />
+				<munit:variables >
+					<munit:variable key="outboundHeaders" value="#[readUrl('classpath://queryallaccountstest/set-event_variable_.dwl')]" />
+				</munit:variables>
+			</munit:set-event>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to query-all-accounts" doc:id="3720e67c-c7d7-4eec-81d5-4e529ca102df" name="query-all-accounts"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Assert payload" doc:id="7545e153-0efc-4373-acd5-edacb0b0743f" message="The payload does not match">
+				<munit-tools:that ><![CDATA[#[%dw 2.0
+import queryallaccountstest::assert_expression_payload
+---
+assert_expression_payload::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+			</munit-tools:assert>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="query-customer-test" doc:id="39bcc1a1-c0f4-4e4b-88aa-ce40ad91a863" >
+		<munit:behavior >
+			<munit:set-event doc:name="Set Input" doc:id="c4cb5c20-1b8d-4538-ad5b-b5165cd65137" >
+				<munit:payload value="#[output application/json --- readUrl('classpath://querycustomertest/set-event_payload.dwl')]" encoding="UTF-8" mediaType="application/json" />
+				<munit:attributes value="#[readUrl('classpath://querycustomertest/set-event_attributes.dwl')]" />
+				<munit:variables >
+					<munit:variable key="outboundHeaders" value="#[readUrl('classpath://querycustomertest/set-event_variable_.dwl')]" />
+					<munit:variable key="accountId" value="#[output application/java --- readUrl('classpath://querycustomertest/set-event_variable_1.dwl')]" encoding="UTF-8" mediaType="application/java" />
+				</munit:variables>
+			</munit:set-event>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to query-customer" doc:id="e9fe1ee6-43e8-4f5b-9e8a-1af63f0607bb" name="query-customer"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Assert payload" doc:id="fd9eafe0-e78c-4189-a5e2-9ad84da95002" message="The payload does not match">
+				<munit-tools:that ><![CDATA[#[%dw 2.0
+import querycustomertest::assert_expression_payload
+---
+assert_expression_payload::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+			</munit-tools:assert>
+		</munit:validation>
+	</munit:test>
+
+</mule>

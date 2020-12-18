@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:api-gateway="http://www.mulesoft.org/schema/mule/api-gateway" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd 
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd
+http://www.mulesoft.org/schema/mule/api-gateway http://www.mulesoft.org/schema/mule/api-gateway/current/mule-api-gateway.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<http:listener-config name="salesforce-account-api-httpListenerConfig">
+        <http:listener-connection host="0.0.0.0" port="${http.port}" />
+    </http:listener-config>
+	<salesforce:sfdc-config name="salesforceConfig" doc:name="Salesforce Config" doc:id="ee088a9a-e7ba-4fc3-bb46-78a2a17ef84a" >
+		<salesforce:basic-connection username="${salesforce.username}" password="${salesforce.password}" securityToken="${salesforce.securitytoken}"/>	
+	</salesforce:sfdc-config>
+	<configuration-properties doc:name="Configuration properties" doc:id="9132c6b2-4ebf-48ca-a423-44685064eec9" file="acme-salesforce-accounts-sapi-dev.yaml" />
+	<configuration doc:name="Configuration" doc:id="bf67bfd0-9291-4357-b36a-6cfa970b08d7" defaultErrorHandler-ref="globalError_Handler" />
+	<api-gateway:autodiscovery apiId="16527693" ignoreBasePath="true" doc:name="API Autodiscovery" doc:id="7df7aedf-36e6-4277-83b2-506a03e94929" flowRef="salesforce-account-api-main" />
+	<error-handler name="globalError_Handler" doc:id="c69daf10-4498-4536-9a98-3d98ac776942" >
+		<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="58996c5d-6a24-4f78-8a7d-f9bda11a6689" type="HTTP:CONNECTIVITY">
+			<set-variable value="400" doc:name="Set Variable" doc:id="d910e24c-b3ec-44f1-9544-5e24e6286721" variableName="httpStatus"/>
+			<flow-ref doc:name="Flow Reference" doc:id="9d9ed7e8-ef3b-4116-bb73-248397aa9772" name="acme-salesforce-accounts-global"/>
+		</on-error-propagate>
+		<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="a2ff9b33-0f14-4d81-b648-492e340008ea" type="SALESFORCE:CONNECTIVITY">
+			<set-variable value="500" doc:name="Set Variable" doc:id="56d2c957-d9d9-4beb-b71b-540366613d5e" variableName="httpStatus"/>
+			<flow-ref doc:name="Flow Reference" doc:id="0f145e7c-01d3-498b-9767-2d38fdcdd7e9" name="acme-salesforce-accounts-global"/>
+		</on-error-propagate>
+		<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="08e2ec62-e468-4bb0-bd5c-592b856aa4a7" >
+			<set-variable value="500" doc:name="Set Variable" doc:id="686d2708-bdff-4a0a-8e72-7bd06632848e" variableName="httpStatus" />
+			<flow-ref doc:name="Flow Reference" doc:id="6812dccc-2dad-403a-acc9-1f18c1943f9c" name="acme-salesforce-accounts-global" />
+		</on-error-propagate>
+	</error-handler>
+	<flow name="acme-salesforce-accounts-global" doc:id="08c58451-685c-420b-8589-351e47d70916" >
+		<ee:transform doc:name="Transform Message" doc:id="d94d42a5-5e5a-4a37-bad4-7917d725ccf1" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	code: vars.httpStatus,
+	message: error.errorType.identifier,
+	description: error.description,
+	dateTime: now() as String 
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>

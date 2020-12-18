@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd">
+	<munit:config name="acme-salesforce-account-interface-suite.xml" />
+	<munit:test name="salesforce-account-api-console-test" doc:id="ea67e2ab-45e5-4a51-844d-c6e2eebcd098" >
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock APIkit Console" doc:id="9e6e5fb9-86c1-4f14-9114-2562e0b4d416" processor="apikit:console">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="f9dda9f5-008e-4506-9019-b818c9987aa6" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[readUrl('classpath://salesforceaccountapiconsoletest\mock_payload1.dwl')]" encoding="UTF-8" />
+					<munit-tools:attributes value="#[readUrl('classpath://salesforceaccountapiconsoletest\mock_attributes1.dwl')]" />
+					<munit-tools:variables >
+						<munit-tools:variable key="outboundHeaders" value="#[readUrl('classpath://salesforceaccountapiconsoletest\mock_variable_2.dwl')]" />
+						<munit-tools:variable key="httpStatus" value="#[readUrl('classpath://salesforceaccountapiconsoletest\mock_variable_3.dwl')]" />
+					</munit-tools:variables>
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+			<munit:set-event doc:name="Set Input" doc:id="57993fd5-460c-4cfe-9d20-71db263ff0cf" >
+				<munit:payload value="#[readUrl('classpath://salesforceaccountapiconsoletest\set-event_payload1.dwl')]" encoding="UTF-8" />
+				<munit:attributes value="#[readUrl('classpath://salesforceaccountapiconsoletest\set-event_attributes1.dwl')]" />
+			</munit:set-event>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to salesforce-account-api-console" doc:id="cf77df53-0534-433e-9a60-eae5735dc92d" name="salesforce-account-api-console"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Assert payload" doc:id="970283a8-6ae2-41b7-bd75-7ef0cd0d4465" message="The payload does not match">
+				<munit-tools:that ><![CDATA[#[%dw 2.0
+import salesforceaccountapiconsoletest::assert_expression_payload1
+---
+assert_expression_payload1::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+			</munit-tools:assert>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="get:\accounts:salesforce-account-api-config-test" doc:id="352ce8ee-6d28-4c87-a22d-7fd62e3504cc" >
+		<munit:behavior >
+			<munit:set-event doc:name="Set Input" doc:id="799a9344-9619-4561-9bba-484b5ec42257" >
+				<munit:payload value="#[readUrl('classpath://getaccountssalesforceaccountapiconfigtest\set-event_payload1.dwl')]" encoding="UTF-8" />
+				<munit:attributes value="#[readUrl('classpath://getaccountssalesforceaccountapiconfigtest\set-event_attributes1.dwl')]" />
+				<munit:variables >
+					<munit:variable key="outboundHeaders" value="#[readUrl('classpath://getaccountssalesforceaccountapiconfigtest\set-event_variable_1.dwl')]" />
+				</munit:variables>
+			</munit:set-event>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to get:\accounts:salesforce-account-api-config" doc:id="f0006405-f6ba-42a7-ba4d-013684292ef9" name="get:\accounts:salesforce-account-api-config"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Assert payload" doc:id="c2c23c34-0e2c-4713-953a-99e4de1531fb" message="The payload does not match">
+				<munit-tools:that ><![CDATA[#[%dw 2.0
+import getaccountssalesforceaccountapiconfigtest::assert_expression_payload1
+---
+assert_expression_payload1::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+			</munit-tools:assert>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="get:\accounts\(accountId):salesforce-account-api-config-test" doc:id="e2b93c5e-9804-4536-b37c-b5e2b259dc30" >
+		<munit:behavior >
+			<munit:set-event doc:name="Set Input" doc:id="968785e2-fdfd-4f19-96c4-48aa703dc1bb" >
+				<munit:payload value="#[readUrl('classpath://getaccountsaccountIdsalesforceaccountapiconfigtest\set-event_payload1.dwl')]" encoding="UTF-8" />
+				<munit:attributes value="#[readUrl('classpath://getaccountsaccountIdsalesforceaccountapiconfigtest\set-event_attributes1.dwl')]" />
+				<munit:variables >
+					<munit:variable key="outboundHeaders" value="#[readUrl('classpath://getaccountsaccountIdsalesforceaccountapiconfigtest\set-event_variable_1.dwl')]" />
+				</munit:variables>
+			</munit:set-event>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to get:\accounts\(accountId):salesforce-account-api-config" doc:id="127ed6b9-b861-4ab1-85b9-d10c8ea9e584" name="get:\accounts\(accountId):salesforce-account-api-config"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Assert payload" doc:id="f8ab4f1d-5eef-46ab-bd51-09023a56a87a" message="The payload does not match">
+				<munit-tools:that ><![CDATA[#[%dw 2.0
+import getaccountsaccountIdsalesforceaccountapiconfigtest::assert_expression_payload1
+---
+assert_expression_payload1::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+			</munit-tools:assert>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="salesforce-account-api-main-test" doc:id="0cdd8430-f1f8-442a-b097-2eadff70536d" >
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock APIkit Router" doc:id="0ad82400-4aa3-4f98-a2a8-2e7d6e6109ba" processor="apikit:router">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="90148af4-dfe4-4d13-aa77-cbfd6cf0a5cf" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[output application/json --- readUrl('classpath://salesforceaccountapimaintest\mock_payload5.dwl')]" mediaType="application/json" encoding="UTF-8" />
+					<munit-tools:variables >
+						<munit-tools:variable key="outboundHeaders" value="#[readUrl('classpath://salesforceaccountapimaintest\mock_variable_10.dwl')]" />
+						<munit-tools:variable key="httpStatus" value="#[readUrl('classpath://salesforceaccountapimaintest\mock_variable_11.dwl')]" />
+						<munit-tools:variable key="accountId" value="#[output application/java --- readUrl('classpath://salesforceaccountapimaintest\mock_variable_12.dwl')]" mediaType="application/java" encoding="UTF-8" />
+					</munit-tools:variables>
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+			<munit:set-event doc:name="Set Input" doc:id="18d01869-ba0e-4b9a-971e-7a9b975609b2" >
+				<munit:payload value="#[readUrl('classpath://salesforceaccountapimaintest\set-event_payload1.dwl')]" encoding="UTF-8" />
+				<munit:attributes value="#[readUrl('classpath://salesforceaccountapimaintest\set-event_attributes1.dwl')]" />
+			</munit:set-event>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to salesforce-account-api-main" doc:id="18c6d929-db12-4c85-9087-c9aca6ea4d1e" name="salesforce-account-api-main"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Assert payload" doc:id="65b7185f-6ee7-4081-89a6-33cc90997fb4" message="The payload does not match">
+				<munit-tools:that ><![CDATA[#[%dw 2.0
+import salesforceaccountapimaintest::assert_expression_payload1
+---
+assert_expression_payload1::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+			</munit-tools:assert>
+		</munit:validation>
+	</munit:test>
+
+
+</mule>

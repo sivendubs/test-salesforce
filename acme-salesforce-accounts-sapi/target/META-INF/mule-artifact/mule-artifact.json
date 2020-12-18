@@ -1,0 +1,30 @@
+{
+  "configs": [
+    "acme-salesforce-accounts-implementation.xml",
+    "global.xml",
+    "acme-salesforce-account-interface.xml"
+  ],
+  "secureProperties": [],
+  "redeploymentEnabled": true,
+  "name": "com.mycompany:acme-salesforce-accounts-sapi:1.0.0-SNAPSHOT",
+  "minMuleVersion": "4.3.0",
+  "requiredProduct": "MULE_EE",
+  "classLoaderModelLoaderDescriptor": {
+    "id": "mule",
+    "attributes": {
+      "exportedPackages": [],
+      "exportedResources": [
+        "acme-salesforce-account-interface.xml",
+        "acme-salesforce-accounts-implementation.xml",
+        "acme-salesforce-accounts-sapi-dev.yaml",
+        "api/salesforce-account-api.raml",
+        "global.xml",
+        "log4j2.xml"
+      ]
+    }
+  },
+  "bundleDescriptorLoader": {
+    "id": "mule",
+    "attributes": {}
+  }
+}

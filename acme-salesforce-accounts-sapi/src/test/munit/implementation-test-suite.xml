@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd">
+	<munit:config name="implementation-test-suite.xml" />
+	<munit:test name="implementation-test-suite-query-all-accountsTest" doc:id="58b85b08-3ae8-4321-80d8-69abd67b6c16" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="733619f0-b89b-4ce6-a994-5453f6871dee" processor="salesforce:query">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="Query All Accounts" attributeName="doc:name" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="HTTP:CONNECTIVITY" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<try doc:name="Try" doc:id="72a9ec17-f710-454d-9f5e-87bb491a9148" >
+				<flow-ref doc:name="Flow-ref to query-all-accounts" doc:id="7f99f0bd-32c5-4a87-9963-ab9725bc64c1" name="query-all-accounts" />
+				<error-handler >
+					<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="4b466601-1ace-4810-9f14-3be70f740066" >
+						<logger level="INFO" doc:name="error" doc:id="d10d04c4-edf5-4b10-8433-edc16e2dd6c2" message="#[payload]"/>
+					</on-error-continue>
+				</error-handler>
+			</try>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-equals doc:name="Assert equals" doc:id="0e33f51e-ab19-4e5c-bf57-d49840d10aa8" actual="#[payload.code]" expected="400" />
+		</munit:validation>
+	</munit:test>
+	<munit:test name="implementation-test-suite-query-customerTest" doc:id="bef065d0-2815-44cc-986e-4662f11c281b" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="0ff79cad-bd69-493a-840d-1f84917bc082" processor="salesforce:query">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="Query" attributeName="doc:name" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="SALESFORCE:CONNECTIVITY" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<try doc:name="Try" doc:id="d7d8d220-2edc-4541-8567-ae44e93e9536" >
+				<flow-ref doc:name="Flow-ref to query-customer" doc:id="68ad220a-6b5a-4966-9555-7cbf411ec2d9" name="query-customer" />
+				<error-handler >
+					<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="03e46c1b-5923-4eb4-be47-3a1e4cc13e12" >
+						<logger level="INFO" doc:name="error" doc:id="e7c9e977-2582-4767-b17b-7e3fd7b05a05" message="#[payload]"/>
+					</on-error-continue>
+				</error-handler>
+			</try>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-equals doc:name="Assert equals" doc:id="9bc44791-4ed5-4850-9b2a-b7132f47f0c1" actual="#[payload.code]" expected="500" />
+		</munit:validation>
+	</munit:test>
+	<munit:test name="implementation-test-suite-query-all-accountsTest1" doc:id="19d7bae9-d404-4244-9f32-f39b03aea6c1" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="345fead1-8e8a-4761-bcaf-03cab8b936d0" processor="salesforce:query">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="Query All Accounts" attributeName="doc:name" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="HTTP:NOT_FOUND" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<try doc:name="Try" doc:id="b4f42fd6-c6ad-4d1e-ad82-cf77933ea797" >
+				<flow-ref doc:name="Flow-ref to query-all-accounts" doc:id="b44f069f-4fa1-4dd8-940d-7b18ba3efa30" name="query-all-accounts" />
+				<error-handler >
+					<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="65129c35-3242-479f-a4af-7a72a1d72153" >
+						<logger level="INFO" doc:name="error" doc:id="1914a366-c0c7-4b98-9993-6add2f60f72c" message="#[payload]"/>
+					</on-error-continue>
+				</error-handler>
+			</try>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-equals doc:name="Assert equals" doc:id="aded688e-378e-48ac-b60b-d6867a9e8b71" actual="#[payload.code]" expected="500"/>
+		</munit:validation>
+	</munit:test>
+
+</mule>

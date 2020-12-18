@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd">
+	<munit:config name="salesforce-account-api-test-suite.xml" />
+	<munit:test name="salesforce-account-api-bad-request" doc:id="fe8f38e1-ff54-461c-8925-bcc029acaa72" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="d3135297-a29b-4c2a-b670-7693da6aaa8c" processor="apikit:router">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="salesforce-account-api-config" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="APIKIT:BAD_REQUEST" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<try doc:name="Try" doc:id="7da6afdc-b327-4959-969a-d304706cd8f9" >
+				<flow-ref doc:name="Flow-ref to salesforce-account-api-main" doc:id="93b1c9e4-05ef-4474-87b9-87643b690451" name="salesforce-account-api-main" />
+				<error-handler >
+					<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="f3e2ebad-31e6-4d59-9e29-8aec409a3218" >
+						<logger level="INFO" doc:name="error" doc:id="5977bea5-26fe-4e40-92c0-ded8a38ea0f6" message="#[payload]"/>
+					</on-error-continue>
+				</error-handler>
+			</try>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-equals doc:name="Assert equals" doc:id="e5461d11-5d00-4286-95f1-074eea42e285" actual="#[payload.message]" expected="Bad request" message="Invalid Payload"/>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="salesforce-account-api-not-found-test" doc:id="eca8a2a2-b515-416c-8e4d-40bb4da295ac" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Copy_of_Mock when" doc:id="69c16423-fb40-4e0d-b974-7ff0c0e55608" processor="apikit:router" >
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="salesforce-account-api-config" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="APIKIT:NOT_FOUND" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<try doc:name="Try" doc:id="0d1fc433-85b5-4c5f-8e8c-1c3349be6b56" >
+				<flow-ref doc:name="Flow-ref to salesforce-account-api-main" doc:id="53a0c554-0251-4fc9-8fa8-2ba01650ae97" name="salesforce-account-api-main" />
+				<error-handler >
+					<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="b859fe07-1b4f-48bf-bd12-190a2529bac9" >
+						<logger level="INFO" doc:name="Copy_of_error" doc:id="90156651-00b1-40eb-a7b2-acc7a8b1d343" message="#[payload]" />
+					</on-error-continue>
+				</error-handler>
+			</try>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-equals doc:name="Assert equals" doc:id="c58e9654-daeb-46a8-bb2f-7cdde68599f6" actual="#[payload.message]" expected="Resource not found" message="Invalid Payload" />
+		</munit:validation>
+	</munit:test>
+	<munit:test name="salesforce-account-api-method-not-allowed" doc:id="bdafc9e1-0d0c-4f56-8e64-8da39293af45" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="de75a368-cc9c-49b5-9953-24c54124746f" processor="apikit:router" >
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="salesforce-account-api-config" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="APIKIT:METHOD_NOT_ALLOWED" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<try doc:name="Try" doc:id="0ed9ddb6-3426-47cc-886b-f3e03dd55caf" >
+				<flow-ref doc:name="Flow-ref to salesforce-account-api-main" doc:id="b9f75c1e-5257-4595-b162-975dc670a4ac" name="salesforce-account-api-main" />
+				<error-handler >
+					<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="f2360684-82b0-4b24-8afd-75af4e46984a" >
+						<logger level="INFO" doc:name="error" doc:id="396438c4-18db-4cbb-a4c2-aec0448f8b1a" message="#[payload]" />
+					</on-error-continue>
+				</error-handler>
+			</try>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-equals doc:name="Assert equals" doc:id="c069ba30-721c-4834-ba9c-cd0bd7c1b88d" actual="#[payload.message]" expected="Method not allowed" message="Invalid Payload"/>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="salesforce-account-api-not-acceptabe" doc:id="daf6db55-6155-4642-af4c-6539cc43bf2f" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="e70b3704-c32c-4e1a-91e1-9449cc3c3451" processor="apikit:router" >
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="salesforce-account-api-config" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="APIKIT:NOT_ACCEPTABLE" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<try doc:name="Try" doc:id="1d83a97c-e41b-4ad0-9c23-64f8b9acb5b8" >
+				<flow-ref doc:name="Flow-ref to salesforce-account-api-main" doc:id="0cbbacf9-1203-4756-8a04-395b5a634233" name="salesforce-account-api-main" />
+				<error-handler >
+					<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="f7a2bd24-3704-41c6-a133-f3c08dd5882e" >
+						<logger level="INFO" doc:name="error" doc:id="2380f7a6-971c-4b25-a506-b9c02e529081" message="#[payload]" />
+					</on-error-continue>
+				</error-handler>
+			</try>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-equals doc:name="Assert equals" doc:id="22c9b7a3-06b9-4b55-ab04-e602b6a0af0f" actual="#[payload.message]" expected="Not acceptable" message="Invalid Payload" />
+		</munit:validation>
+	</munit:test>
+	<munit:test name="salesforce-account-api-unsupported-media-type" doc:id="f7b39d15-9092-4935-b8f0-6a6abc0c397c" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="a8f9acbd-696f-4921-a82c-6c52689c05e4" processor="apikit:router" >
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="salesforce-account-api-config" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="APIKIT:UNSUPPORTED_MEDIA_TYPE" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<try doc:name="Try" doc:id="9684139a-3fb8-40b1-aa60-55d23dc7b231" >
+				<flow-ref doc:name="Flow-ref to salesforce-account-api-main" doc:id="9cbfcdd7-c87f-4831-afe8-beb44d5c8632" name="salesforce-account-api-main" />
+				<error-handler >
+					<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="3a85f26b-493a-4e63-a35c-5acae0bc7c68" >
+						<logger level="INFO" doc:name="error" doc:id="8a0c55be-4160-4e0c-8997-df2e01699855" message="#[payload]" />
+					</on-error-continue>
+				</error-handler>
+			</try>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-equals doc:name="Assert equals" doc:id="ccfbc864-2d60-437e-ba75-97b15c189384" actual="#[payload.message]" expected="Unsupported media type" message="Invalid Payload"/>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="salesforce-account-api-not-implemented" doc:id="8a3a9b34-4330-4bb3-ae56-1ffca3c454b0" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="c22794de-4ca9-4188-9594-531ba83629c5" processor="apikit:router" >
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="salesforce-account-api-config" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="APIKIT:NOT_IMPLEMENTED" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<try doc:name="Try" doc:id="36a4ab30-28de-4b96-83c9-710340e8beea" >
+				<flow-ref doc:name="Flow-ref to salesforce-account-api-main" doc:id="09faac92-b3a1-42de-8bbc-e0ddd0a0b7b4" name="salesforce-account-api-main" />
+				<error-handler >
+					<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="64cce7ea-7550-451d-a6a3-81d43c94ce6a" >
+						<logger level="INFO" doc:name="error" doc:id="dbda80ef-c24c-4158-87b9-3da45ca0a226" message="#[payload]" />
+					</on-error-continue>
+				</error-handler>
+			</try>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-equals doc:name="Assert equals" doc:id="295e78d8-05be-4312-8099-959fbac07dba" actual="#[payload.message]" expected="Not Implemented" message="Invalid Payload"/>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="salesforce-account-api-console-not-found" doc:id="06bed2a2-db6c-4fe5-87ce-6628826d5aef" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="c3650a84-c3d1-4e37-b02a-585751e725d6" processor="apikit:console">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="salesforce-account-api-config" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="APIKIT:NOT_FOUND" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<try doc:name="Try" doc:id="71ec9779-5415-4435-bd3b-44deb3d9c4b4" >
+				<flow-ref doc:name="Flow-ref to salesforce-account-api-console" doc:id="b46d0a15-5c43-4f2a-b545-c4faddc3df48" name="salesforce-account-api-console" />
+				<error-handler >
+					<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="2c00c2eb-d4b5-4559-a9f4-6e04f311404f" >
+						<logger level="INFO" doc:name="error" doc:id="5b1489ee-13e0-4c3a-aa81-036cca8e8c48" message="#[payload]"/>
+					</on-error-continue>
+				</error-handler>
+			</try>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-equals doc:name="Assert equals" doc:id="ae4731f5-6c2a-4ea2-8eb5-2161255b95fb" actual="#[payload.message]" expected="Resource not found" message="Invalid payload"/>
+		</munit:validation>
+	</munit:test>
+
+</mule>

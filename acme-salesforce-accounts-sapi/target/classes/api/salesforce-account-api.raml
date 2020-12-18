@@ -1,0 +1,127 @@
+#%RAML 1.0
+
+version: v1.0
+title: Salesforce Account API
+
+
+traits:
+  jwt:
+    headers:
+      authorization:
+        description: Bearer 
+        type: string
+    responses:
+      400:
+        description: Token was not provided.
+      401:
+        description: Bad or expired token. To fix, you should re-authenticate the user.
+      403:
+        description: The client id validation failed.
+      503:
+        description: Error communicating with JWKS server.  
+
+/accounts:
+  get:
+    is: [jwt]
+    responses:
+      200:
+        body:
+          application/json:
+            example: |
+              {
+                "accounts": [
+                  {
+                    "accountId": "0014I00001qsS4lQAE",
+                    "tradingName": "GenePoint",
+                    "accountNumber": "CC978213",
+                    "industry": "Biotechnology",
+                    "contacts": [
+                      {
+                        "firstName": "Edna",
+                        "lastName": "Frank",
+                        "title": "VP, Technology",
+                        "email": "efrank@genepoint.com",
+                        "phone": "(650) 867-3450"
+                      },
+                      {
+                        "firstName": "Edna",
+                        "lastName": "Frank",
+                        "title": "VP, Technology",
+                        "email": "efrank@genepoint.com",
+                        "phone": "(650) 867-3450"
+                      }
+                    ],
+                    "links": [
+                      {
+                        "rel": "self",
+                        "href": "accounts/0014I00001qsS4lQAE"
+                      }
+                    ]
+                  },
+                  {
+                    "accountId": "0014I00001qsS4lQAE",
+                    "tradingName": "GenePoint",
+                    "accountNumber": "CC978213",
+                    "industry": "Biotechnology",
+                    "contacts": [
+                      {
+                        "firstName": "Edna",
+                        "lastName": "Frank",
+                        "title": "VP, Technology",
+                        "email": "efrank@genepoint.com",
+                        "phone": "(650) 867-3450"
+                      },
+                      {
+                        "firstName": "Edna",
+                        "lastName": "Frank",
+                        "title": "VP, Technology",
+                        "email": "efrank@genepoint.com",
+                        "phone": "(650) 867-3450"
+                      }
+                    ],
+                    "links": [
+                      {
+                        "rel": "self",
+                        "href": "accounts/0014I00001qsS4lQAE"
+                      }
+                    ]
+                  }
+                ]
+              }
+  /{accountId}:
+    get:
+      responses:
+        200:
+          body:
+            application/json:
+              example: | 
+                {
+                  "accountId": "0014I00001qsS4lQAE",
+                  "tradingName": "GenePoint",
+                  "accountNumber": "CC978213",
+                  "industry": "Biotechnology",
+                  "contacts": [
+                    {
+                      "firstName": "Edna",
+                      "lastName": "Frank",
+                      "title": "VP, Technology",
+                      "email": "efrank@genepoint.com",
+                      "phone": "(650) 867-3450"
+                    },
+                    {
+                      "firstName": "Edna",
+                      "lastName": "Frank",
+                      "title": "VP, Technology",
+                      "email": "efrank@genepoint.com",
+                      "phone": "(650) 867-3450"
+                    }
+                  ],
+                  "links": [
+                    {
+                      "rel": "self",
+                      "href": "accounts/0014I00001qsS4lQAE"
+                    }
+                  ]
+                }
+
+              

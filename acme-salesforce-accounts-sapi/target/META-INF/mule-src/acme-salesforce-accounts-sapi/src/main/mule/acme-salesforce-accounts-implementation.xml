@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:sap="http://www.mulesoft.org/schema/mule/sap" xmlns:tracking="http://www.mulesoft.org/schema/mule/ee/tracking"
+	xmlns:api-gateway="http://www.mulesoft.org/schema/mule/api-gateway"
+	xmlns:vm="http://www.mulesoft.org/schema/mule/vm" xmlns:os="http://www.mulesoft.org/schema/mule/os" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:american-flights-api="http://www.mulesoft.org/schema/mule/american-flights-api" xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd
+http://www.mulesoft.org/schema/mule/american-flights-api http://www.mulesoft.org/schema/mule/american-flights-api/current/mule-american-flights-api.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/current/mule-os.xsd
+http://www.mulesoft.org/schema/mule/vm http://www.mulesoft.org/schema/mule/vm/current/mule-vm.xsd
+http://www.mulesoft.org/schema/mule/api-gateway http://www.mulesoft.org/schema/mule/api-gateway/current/mule-api-gateway.xsd
+http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/mule/ee/tracking/current/mule-tracking-ee.xsd
+http://www.mulesoft.org/schema/mule/sap http://www.mulesoft.org/schema/mule/sap/current/mule-sap.xsd">
+	<ee:object-store-caching-strategy name="Caching_Strategy" doc:name="Caching Strategy" doc:id="6ca14fc0-ea7e-46dd-97b9-96c9f0eb8f62" keyGenerationExpression="#[vars.accountId]" objectStore="Object_store_new">
+	</ee:object-store-caching-strategy>
+	<os:object-store name="Object_store_new" doc:name="Object store" doc:id="19d8bdfc-9177-4f31-ad7f-c7639218e051" maxEntries="100" entryTtl="5" entryTtlUnit="MINUTES" persistent="false"/>
+	<flow name="query-all-accounts" doc:id="74f61086-062d-4f3c-bf91-8edc3a5ef75a" >
+		<salesforce:query doc:name="Query All Accounts" doc:id="a38bb2b8-5f94-49bd-a5a9-0a2122c121e1" config-ref="salesforceConfig">
+			<salesforce:salesforce-query ><![CDATA[SELECT Account.Id, Account.Name, Account.AccountNumber, Account.Industry, Account.AnnualRevenue, (SELECT Contact.FirstName, Contact.LastName, Contact.Title, Contact.Email, Contact.Phone FROM
+Account.Contacts)
+FROM Account]]></salesforce:salesforce-query>
+		</salesforce:query>
+		<ee:transform doc:name="Transform Message" doc:id="9d1b91bb-648b-49ec-aab1-6224cd5ccc67" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+accounts: payload map ( payload01 , indexOfPayload01 ) -> {
+		accountId: payload01.Id,
+		tradingName: payload01.Name,
+		accountNumber: payload01.AccountNumber,
+		industry: payload01.Industry,
+		contacts: payload01.Contacts map ( payload02 , indexOfPayload02 ) -> {
+			firstName: payload02.FirstName,
+	        lastName: payload02.LastName,
+	        title: payload02.Title,
+	        email: payload02.Email,
+	        phone: payload02.Phone
+		},
+	    
+		links: [{
+			rel: "self",
+			href: (vars.relativePath default "") ++ "/api/accounts/" ++ (payload01.Id as String default "")
+		}]
+	}
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="query-customer" doc:id="84bf6780-8635-4bc5-a92e-f647062d6a01" tracking:enable-default-events="true">
+		<ee:cache doc:name="Cache" doc:id="8312d9c0-8317-492a-9bfa-f7d2332ee529" cachingStrategy-ref="Caching_Strategy">
+			<salesforce:query doc:name="Query" doc:id="59ee8cd7-92d4-478d-8e6e-9c2f710eb3cf" config-ref="salesforceConfig">
+			<salesforce:salesforce-query><![CDATA[SELECT Account.Id, Account.Name, Account.AccountNumber, Account.Industry, Account.AnnualRevenue, (SELECT Contact.FirstName, Contact.LastName, Contact.Title, Contact.Email, Contact.Phone FROM
+			Account.Contacts)
+			FROM Account WHERE Account.Id = ':account-id']]></salesforce:salesforce-query>
+						<salesforce:parameters><![CDATA[#[output application/java
+---
+{
+	"account-id" : vars.'accountId'
+}]]]></salesforce:parameters>		
+			</salesforce:query>
+			<ee:transform doc:name="Transform Message" doc:id="52fe0590-37dc-44af-ae08-c48c876278f0">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+accounts: payload map ( payload01 , indexOfPayload01 ) -> {
+		accountId: payload01.Id,
+		tradingName: payload01.Name,
+		accountNumber: payload01.AccountNumber,
+		industry: payload01.Industry,
+		contacts: payload01.Contacts map ( payload02 , indexOfPayload02 ) -> {
+			firstName: payload02.FirstName,
+	        lastName: payload02.LastName,
+	        title: payload02.Title,
+	        email: payload02.Email,
+	        phone: payload02.Phone
+		},
+	    
+		links: [{
+			rel: "self",
+			href: (vars.relativePath default "") ++ "/api/accounts/" ++ (payload01.Id as String default "")
+		}]
+	}
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		</ee:cache>
+	
+</flow>
+</mule>
